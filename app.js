@@ -439,7 +439,7 @@
     var html =
       '<div class="card">' +
         '<div class="title">计件工时库</div>' +
-        '<div class="subtitle">浙江土畜凯兴 · 2026版 / ' + (state.settings ? state.settings.defaultHourlyWage : 27) + '元工价 · 共 ' + state.processes.length + ' 道</div>' +
+        '<div class="subtitle">浙江土畜凯兴 · 2026版 · 共 ' + state.processes.length + ' 道</div>' +
         '<input id="search" class="input-field" placeholder="搜索工序名 / 编号 / 大工序" value="' + state.keyword + '" />' +
         '<div id="catBar" class="cat-bar">' + catBar + '</div>' +
       '</div>' +
