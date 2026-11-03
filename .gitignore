@@ -1,0 +1,2 @@
+# 部署时生成的运行时配置（含 Supabase publishable key），不提交到仓库
+runtime-config.js
