@@ -96,20 +96,20 @@
 <body>
 <div id="app"></div>
 
-<!-- 配置（必填占位符，由用户填入） -->
+<!-- 配置（占位符，真实值由部署时生成的 runtime-config.js 覆盖） -->
 <script src="config.js"></script>
 <!-- 计算核心（无任何业务数据，纯公式） -->
 <script src="calc.js"></script>
 
-<!-- 条件加载：mock 模式才加载含基准数据的 mock.js；生产模式加载 Supabase SDK -->
+<!-- 条件加载：runtime-config.js（部署生成，覆盖配置）→ mock.js 或 Supabase SDK → app.js -->
 <script>
 (function () {
   var cfg = window.KX_CONFIG || {};
-  var deps = [];
+  // runtime-config.js 由部署阶段生成，覆盖 config.js 中的占位符；本地不存在则跳过
+  var deps = ['runtime-config.js'];
   if (cfg.USE_MOCK) {
     deps.push('mock.js');
   } else {
-    // Supabase JS v2（官方 CDN）
     deps.push('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
   }
   function loadNext(i) {
@@ -123,8 +123,13 @@
     s.src = deps[i];
     s.onload = function () { loadNext(i + 1); };
     s.onerror = function () {
-      document.getElementById('app').innerHTML =
-        '<div style="padding:40px;text-align:center;color:#d9363e">依赖加载失败：' + deps[i] + '</div>';
+      // runtime-config.js 本地不存在属正常情况，静默跳过
+      if (deps[i] === 'runtime-config.js') {
+        loadNext(i + 1);
+      } else {
+        document.getElementById('app').innerHTML =
+          '<div style="padding:40px;text-align:center;color:#d9363e">依赖加载失败：' + deps[i] + '</div>';
+      }
     };
     document.head.appendChild(s);
   }
