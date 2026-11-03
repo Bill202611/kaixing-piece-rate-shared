@@ -80,8 +80,19 @@
   .login-card { background: #fff; border-radius: 16px; padding: 32px 24px; width: 100%; max-width: 420px; box-shadow: 0 4px 20px rgba(0,0,0,.08); }
   .login-title { font-size: 22px; font-weight: 700; color: #1e5f8e; text-align: center; margin-bottom: 6px; }
   .login-sub { font-size: 14px; color: #888; text-align: center; margin-bottom: 24px; }
-  .login-err { background: #fef0f0; color: #d9363e; padding: 10px 12px; border-radius: 8px; font-size: 14px; margin-bottom: 14px; }
+  /* 登录框内输入框加大，适合手机点击 */
+  .login-card .input-field { padding: 14px 16px; font-size: 18px; }
+  /* 错误提示：红色但不刺眼 */
+  .login-err { background: #fff1f0; color: #cf1322; border: 1px solid #ffccc7; padding: 10px 12px; border-radius: 8px; font-size: 14px; margin-bottom: 14px; line-height: 1.5; }
   .login-tip { font-size: 12px; color: #999; margin-top: 16px; line-height: 1.6; text-align: center; }
+  /* 记住账号 */
+  .remember-row { display: flex; align-items: center; gap: 8px; margin: 14px 0 4px; font-size: 14px; color: #555; cursor: pointer; user-select: none; }
+  .remember-row input[type=checkbox] { width: 18px; height: 18px; accent-color: #16a34a; cursor: pointer; }
+  /* 登录按钮：绿色，大号全宽，悬停/按下反馈 */
+  .btn-login { background: #16a34a; color: #fff; padding: 14px 18px; font-size: 18px; font-weight: 600; border-radius: 10px; transition: background .15s, transform .05s; }
+  .btn-login:hover { background: #15803d; }
+  .btn-login:active { background: #166534; transform: scale(0.98); }
+  .btn-login:disabled { background: #86efac; cursor: not-allowed; transform: none; }
 
   /* 顶部栏 */
   .hdr { display: flex; align-items: center; padding: 12px 4px; }
