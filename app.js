@@ -240,12 +240,19 @@
           '<input id="loginPwd" class="input-field" type="password" autocomplete="current-password" placeholder="请输入密码" />' +
           '<button id="loginBtn" class="btn btn-primary btn-block" style="margin-top:16px">登录</button>' +
           '<div class="login-tip">' + (CFG.USE_MOCK ? 'Mock 模式：邮箱含 admin 即为管理员，其余为只读账号，密码任意。' : '账号由管理员在 Supabase 后台创建，不开放自助注册。') + '</div>' +
+          '<div style="text-align:center;margin-top:8px"><a href="#" id="reconfigLink" style="font-size:12px;color:#bbb;text-decoration:none">重新配置 Supabase</a></div>' +
         '</div>' +
       '</div>';
     document.getElementById('app').innerHTML = html;
     document.getElementById('loginBtn').addEventListener('click', doLogin);
     document.getElementById('loginPwd').addEventListener('keydown', function (e) {
       if (e.key === 'Enter') doLogin();
+    });
+    document.getElementById('reconfigLink').addEventListener('click', function (e) {
+      e.preventDefault();
+      // 清除 localStorage 覆盖，回到配置表单
+      try { localStorage.removeItem('kx_supabase_config'); } catch (err) {}
+      showConfigSetup();
     });
   }
 
