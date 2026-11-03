@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>凯兴计件单价系统 · 共享版</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: #f4f6f8; color: #1a1a1a; font-size: 16px;
+    padding-bottom: 70px;
+  }
+  .app { max-width: 720px; margin: 0 auto; padding: 12px; }
+  .card {
+    background: #fff; border-radius: 12px; padding: 16px;
+    margin-bottom: 12px; box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  }
+  .title { font-size: 20px; font-weight: 700; color: #1e5f8e; margin-bottom: 6px; }
+  .subtitle { font-size: 14px; color: #888; margin-bottom: 10px; }
+  .input-field {
+    width: 100%; background: #f7f8fa; border: 1px solid #dcdfe6;
+    border-radius: 8px; padding: 12px 14px; font-size: 17px; color: #1a1a1a;
+  }
+  .input-label { display: block; font-size: 14px; color: #555; margin: 10px 0 6px; }
+  .btn {
+    display: inline-block; padding: 12px 18px; border-radius: 8px;
+    font-size: 17px; text-align: center; border: none; cursor: pointer; line-height: 1.4;
+  }
+  .btn-primary { background: #1e5f8e; color: #fff; }
+  .btn-warn { background: #e6a23c; color: #fff; }
+  .btn-danger { background: #d9363e; color: #fff; }
+  .btn-default { background: #f0f2f5; color: #333; }
+  .btn-block { display: block; width: 100%; margin-bottom: 10px; }
+  .btn-sm { padding: 6px 12px; font-size: 14px; }
+  .price-big { font-size: 36px; font-weight: 800; color: #d9363e; line-height: 1.2; }
+  .price-unit { font-size: 14px; color: #999; margin-left: 4px; }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 12px; background: #e8f1f8; color: #1e5f8e; margin-right: 6px; }
+  .tag-orange { background: #fff3e0; color: #e6a23c; }
+  .formula { font-size: 13px; color: #555; background: #f7f8fa; padding: 8px; border-radius: 6px; margin: 5px 0; word-break: break-all; line-height: 1.6; }
+  .row-head { display: flex; align-items: center; margin-bottom: 6px; }
+  .row-id { font-size: 13px; color: #999; margin-right: 8px; }
+  .row-name { font-size: 17px; font-weight: 600; margin-bottom: 5px; }
+  .row-meta { font-size: 13px; color: #777; }
+  .row-remark { font-size: 12px; color: #e6a23c; margin-top: 5px; }
+  .row-price { margin-left: auto; font-size: 18px; font-weight: 700; color: #d9363e; }
+  .cat-bar { display: flex; flex-wrap: wrap; margin-top: 10px; }
+  .cat-chip { padding: 6px 14px; margin: 5px 8px 0 0; border-radius: 20px; background: #f0f2f5; color: #555; font-size: 14px; cursor: pointer; }
+  .cat-chip.active { background: #1e5f8e; color: #fff; }
+  .empty { text-align: center; color: #999; padding: 40px 0; }
+  .fab { position: fixed; right: 20px; bottom: 80px; background: #1e5f8e; color: #fff; padding: 12px 18px; border-radius: 24px; font-size: 15px; box-shadow: 0 4px 12px rgba(30,95,142,.4); z-index: 99; cursor: pointer; }
+  .tabbar { position: fixed; bottom: 0; left: 0; right: 0; max-width: 720px; margin: 0 auto; display: flex; background: #fff; border-top: 1px solid #e5e5e5; z-index: 100; }
+  .tab { flex: 1; text-align: center; padding: 10px 0; font-size: 14px; color: #7a7a7a; cursor: pointer; }
+  .tab.active { color: #1e5f8e; font-weight: 700; }
+  .result-grid { display: flex; margin-top: 14px; background: #fff; border-radius: 8px; overflow: hidden; }
+  .result-cell { flex: 1; padding: 12px 6px; text-align: center; border-right: 1px solid #f0f2f5; }
+  .result-cell:last-child { border-right: none; }
+  .cell-label { font-size: 12px; color: #999; margin-bottom: 4px; }
+  .cell-val { font-size: 16px; font-weight: 700; color: #1e5f8e; }
+  .check-row { display: flex; align-items: center; }
+  .checkbox { width: 22px; height: 22px; border: 2px solid #ccc; border-radius: 5px; margin-right: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .checkbox.checked { background: #1e5f8e; border-color: #1e5f8e; }
+  .checkbox.checked::after { content: ''; width: 6px; height: 11px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); margin-top: -2px; }
+  .total-card { background: #fff8f1; border: 1px solid #ffe0b2; }
+  .total-detail { display: flex; justify-content: space-between; font-size: 13px; color: #666; padding: 5px 0; border-bottom: 1px dashed #f0e0c8; }
+  .detail-price { color: #1e5f8e; font-weight: 600; }
+  .wages-row { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px dashed #eee; }
+  .wages-val { font-size: 26px; font-weight: 800; color: #d9363e; }
+  .note { font-size: 13px; color: #666; line-height: 1.8; margin-bottom: 4px; }
+  .btn-group { display: flex; gap: 10px; margin-bottom: 10px; }
+  .btn-group .btn { flex: 1; }
+  .qty-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+  .adjust-row { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+  .adjust-pct { font-size: 20px; font-weight: 700; color: #1e5f8e; }
+  .select-all { display: inline-block; padding: 6px 14px; background: #e8f1f8; color: #1e5f8e; border-radius: 20px; font-size: 14px; cursor: pointer; margin-top: 8px; }
+  .hist-row .row-id { margin-right: 6px; }
+
+  /* 登录页 */
+  .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .login-card { background: #fff; border-radius: 16px; padding: 32px 24px; width: 100%; max-width: 420px; box-shadow: 0 4px 20px rgba(0,0,0,.08); }
+  .login-title { font-size: 22px; font-weight: 700; color: #1e5f8e; text-align: center; margin-bottom: 6px; }
+  .login-sub { font-size: 14px; color: #888; text-align: center; margin-bottom: 24px; }
+  .login-err { background: #fef0f0; color: #d9363e; padding: 10px 12px; border-radius: 8px; font-size: 14px; margin-bottom: 14px; }
+  .login-tip { font-size: 12px; color: #999; margin-top: 16px; line-height: 1.6; text-align: center; }
+
+  /* 顶部栏 */
+  .hdr { display: flex; align-items: center; padding: 12px 4px; }
+  .hdr-title { font-size: 18px; font-weight: 700; color: #1e5f8e; }
+  .hdr-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+  .hdr-email { font-size: 13px; color: #666; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .role-tag { font-size: 12px; padding: 3px 10px; border-radius: 10px; }
+  .role-admin { background: #fef0f0; color: #d9363e; }
+  .role-viewer { background: #e8f1f8; color: #1e5f8e; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<!-- 配置（必填占位符，由用户填入） -->
+<script src="config.js"></script>
+<!-- 计算核心（无任何业务数据，纯公式） -->
+<script src="calc.js"></script>
+
+<!-- 条件加载：mock 模式才加载含基准数据的 mock.js；生产模式加载 Supabase SDK -->
+<script>
+(function () {
+  var cfg = window.KX_CONFIG || {};
+  var deps = [];
+  if (cfg.USE_MOCK) {
+    deps.push('mock.js');
+  } else {
+    // Supabase JS v2（官方 CDN）
+    deps.push('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2');
+  }
+  function loadNext(i) {
+    if (i >= deps.length) {
+      var s = document.createElement('script');
+      s.src = 'app.js';
+      document.head.appendChild(s);
+      return;
+    }
+    var s = document.createElement('script');
+    s.src = deps[i];
+    s.onload = function () { loadNext(i + 1); };
+    s.onerror = function () {
+      document.getElementById('app').innerHTML =
+        '<div style="padding:40px;text-align:center;color:#d9363e">依赖加载失败：' + deps[i] + '</div>';
+    };
+    document.head.appendChild(s);
+  }
+  loadNext(0);
+})();
+</script>
+</body>
+</html>
