@@ -1,0 +1,7 @@
+// =====================================================================
+// runtime-config.js 模板 —— 部署时由 gen-runtime-config.js 生成
+// 生成后的 runtime-config.js 会覆盖 config.js 中的占位符，使访客打开页面直接进入登录页。
+// 本文件（.example）不含真实密钥，可提交到仓库；生成后的 runtime-config.js 不提交（见 .gitignore）。
+// =====================================================================
+window.KX_CONFIG.SUPABASE_URL = 'https://your-project.supabase.co';
+window.KX_CONFIG.SUPABASE_ANON_KEY = 'your-publishable-or-anon-key';
