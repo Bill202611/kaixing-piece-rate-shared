@@ -227,7 +227,12 @@
   }
 
   // ---------- 登录 ----------
+  var REMEMBER_KEY = 'kx_remembered_email';
+
   function showLogin(msg) {
+    // 读取已记住的邮箱（仅邮箱，绝不存密码）
+    var remembered = '';
+    try { remembered = localStorage.getItem(REMEMBER_KEY) || ''; } catch (e) {}
     var html =
       '<div class="login-wrap">' +
         '<div class="login-card">' +
@@ -235,10 +240,14 @@
           '<div class="login-sub">浙江土畜凯兴 · 共享版（需登录）</div>' +
           (msg ? '<div class="login-err">' + msg + '</div>' : '') +
           '<label class="input-label">邮箱</label>' +
-          '<input id="loginEmail" class="input-field" type="email" autocomplete="username" placeholder="your@email.com" />' +
+          '<input id="loginEmail" class="input-field" type="email" autocomplete="username" placeholder="your@email.com" value="' + (remembered ? remembered.replace(/"/g, '&quot;') : '') + '" />' +
           '<label class="input-label">密码</label>' +
           '<input id="loginPwd" class="input-field" type="password" autocomplete="current-password" placeholder="请输入密码" />' +
-          '<button id="loginBtn" class="btn btn-primary btn-block" style="margin-top:16px">登录</button>' +
+          '<label class="remember-row">' +
+            '<input type="checkbox" id="rememberChk" ' + (remembered ? 'checked' : '') + ' />' +
+            '<span>记住账号</span>' +
+          '</label>' +
+          '<button id="loginBtn" class="btn btn-login btn-block" style="margin-top:16px">登录</button>' +
           '<div class="login-tip">' + (CFG.USE_MOCK ? 'Mock 模式：邮箱含 admin 即为管理员，其余为只读账号，密码任意。' : '账号由管理员在 Supabase 后台创建，不开放自助注册。') + '</div>' +
           '<div style="text-align:center;margin-top:8px"><a href="#" id="reconfigLink" style="font-size:12px;color:#bbb;text-decoration:none">重新配置 Supabase</a></div>' +
         '</div>' +
@@ -248,9 +257,14 @@
     document.getElementById('loginPwd').addEventListener('keydown', function (e) {
       if (e.key === 'Enter') doLogin();
     });
+    // 取消勾选时立即清除已存邮箱
+    document.getElementById('rememberChk').addEventListener('change', function (e) {
+      if (!e.target.checked) {
+        try { localStorage.removeItem(REMEMBER_KEY); } catch (err) {}
+      }
+    });
     document.getElementById('reconfigLink').addEventListener('click', function (e) {
       e.preventDefault();
-      // 清除 localStorage 覆盖，回到配置表单
       try { localStorage.removeItem('kx_supabase_config'); } catch (err) {}
       showConfigSetup();
     });
@@ -259,6 +273,7 @@
   function doLogin() {
     var email = document.getElementById('loginEmail').value.trim();
     var pwd = document.getElementById('loginPwd').value;
+    var remember = document.getElementById('rememberChk').checked;
     if (!email || !pwd) { showLogin('请输入邮箱和密码'); return; }
     var btn = document.getElementById('loginBtn');
     btn.textContent = '登录中...'; btn.disabled = true;
@@ -267,6 +282,11 @@
         showLogin('登录失败：' + (res.error.message || res.error));
         return;
       }
+      // 仅记住邮箱，绝不存密码
+      try {
+        if (remember) localStorage.setItem(REMEMBER_KEY, email);
+        else localStorage.removeItem(REMEMBER_KEY);
+      } catch (err) {}
       state.user = db.getCurrentUser();
       afterLogin();
     }).catch(function (e) {
